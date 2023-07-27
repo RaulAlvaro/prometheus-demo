@@ -10,6 +10,12 @@ const counter = new client.Counter({
   labelNames: ["code"],
 });
 
+const gauge = new client.Gauge({
+  name: "test_gauge",
+  help: "Example of a gauge",
+  labelNames: ["method", "code"],
+});
+
 setInterval(() => {
   counter.inc({ code: 200 });
 }, 1000);
@@ -17,6 +23,12 @@ setInterval(() => {
 setInterval(() => {
   counter.inc({ code: 400 });
 }, 4000);
+
+setInterval(() => {
+  gauge.set({ method: "get", code: 200 }, Math.random());
+  gauge.set(Math.random());
+  gauge.labels("post", "300").inc();
+}, 1000);
 
 app.get("/metrics", async (req, res) => {
   try {
